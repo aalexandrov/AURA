@@ -12,55 +12,55 @@ import de.tuberlin.aura.core.task.common.TaskRuntimeContext;
 
 public final class InputGate extends AbstractGate {
 
-	// ---------------------------------------------------
-	// Constructors.
-	// ---------------------------------------------------
+    // ---------------------------------------------------
+    // Constructors.
+    // ---------------------------------------------------
 
-	public InputGate(final TaskRuntimeContext context, int gateIndex) {
-		super(context, gateIndex, context.taskBinding.inputGateBindings.get(gateIndex).size());
+    public InputGate(final TaskRuntimeContext context, int gateIndex) {
+        super(context, gateIndex, context.taskBinding.inputGateBindings.get(gateIndex).size());
 
-		if (numChannels > 0) {
-			inputQueue = new LinkedBlockingQueue<DataIOEvent>();
-		} else { // numChannels == 0
-			inputQueue = null;
-		}
-	}
+        if (numChannels > 0) {
+            inputQueue = new LinkedBlockingQueue<DataIOEvent>();
+        } else { // numChannels == 0
+            inputQueue = null;
+        }
+    }
 
-	// ---------------------------------------------------
-	// Fields.
-	// ---------------------------------------------------
+    // ---------------------------------------------------
+    // Fields.
+    // ---------------------------------------------------
 
-	private final BlockingQueue<DataIOEvent> inputQueue;
+    private final BlockingQueue<DataIOEvent> inputQueue;
 
-	// ---------------------------------------------------
-	// Public.
-	// ---------------------------------------------------
+    // ---------------------------------------------------
+    // Public.
+    // ---------------------------------------------------
 
-	public void addToInputQueue(final DataIOEvent dataEvent) {
-		// sanity check.
-		if (dataEvent == null)
-			throw new IllegalArgumentException("message == null");
+    public void addToInputQueue(final DataIOEvent dataEvent) {
+        // sanity check.
+        if (dataEvent == null)
+            throw new IllegalArgumentException("message == null");
 
-		inputQueue.add(dataEvent);
-	}
+        inputQueue.add(dataEvent);
+    }
 
-	public void openGate() {
-		for (int i = 0; i < numChannels; ++i) {
-			final Channel ch = channels.get(i);
-			final UUID srcID = context.taskBinding.inputGateBindings.get(gateIndex).get(i).taskID;
-			ch.writeAndFlush(new DataIOEvent(DataEventType.DATA_EVENT_OUTPUT_GATE_OPEN, srcID, context.task.taskID));
-		}
-	}
+    public void openGate() {
+        for (int i = 0; i < numChannels; ++i) {
+            final Channel ch = channels.get(i);
+            final UUID srcID = context.taskBinding.inputGateBindings.get(gateIndex).get(i).taskID;
+            ch.writeAndFlush(new DataIOEvent(DataEventType.DATA_EVENT_OUTPUT_GATE_OPEN, srcID, context.task.taskID));
+        }
+    }
 
-	public void closeGate() {
-		for (int i = 0; i < numChannels; ++i) {
-			final Channel ch = channels.get(i);
-			final UUID srcID = context.taskBinding.inputGateBindings.get(gateIndex).get(i).taskID;
-			ch.writeAndFlush(new DataIOEvent(DataEventType.DATA_EVENT_OUTPUT_GATE_CLOSE, srcID, context.task.taskID));
-		}
-	}
+    public void closeGate() {
+        for (int i = 0; i < numChannels; ++i) {
+            final Channel ch = channels.get(i);
+            final UUID srcID = context.taskBinding.inputGateBindings.get(gateIndex).get(i).taskID;
+            ch.writeAndFlush(new DataIOEvent(DataEventType.DATA_EVENT_OUTPUT_GATE_CLOSE, srcID, context.task.taskID));
+        }
+    }
 
-	public BlockingQueue<DataIOEvent> getInputQueue() {
-		return inputQueue;
-	}
+    public BlockingQueue<DataIOEvent> getInputQueue() {
+        return inputQueue;
+    }
 }
